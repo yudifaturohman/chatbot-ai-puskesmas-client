@@ -1,28 +1,34 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 const ChatbotPuskesmas = () => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
-  const sessionId = 'test_session_9922212';
+  const sessionId = 'test_session_909090';
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const res = await fetch(`http://127.0.0.1:8000/messages/${sessionId}`);
-        const data = await res.json();
-        const formattedMessages = data.map((item, idx) => ({
+  const fetchMessages = async () => {
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/messages/${sessionId}`);
+      const data = await res.json();
+  
+      const formattedMessages = data
+        .sort((a, b) => a.id - b.id) // 👉 Urutkan berdasarkan id
+        .map((item, idx) => ({
           id: item.id || idx,
           sender: item.message.type === 'human' ? 'user' : 'bot',
           text: item.message.data.content,
           time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         }));
-        setMessages(formattedMessages);
-      } catch (err) {
-        console.error('Error fetching messages:', err);
-      }
-    };
+  
+      setMessages(formattedMessages);
+    } catch (err) {
+      console.error('Error fetching messages:', err);
+    }
+  };
+  
 
+  useEffect(() => {
     fetchMessages();
   }, []);
 
@@ -35,7 +41,6 @@ const ChatbotPuskesmas = () => {
       id: messages.length + 1,
       sender: 'user',
       text: message,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -55,22 +60,16 @@ const ChatbotPuskesmas = () => {
       });
 
       const data = await response.json();
+      console.log('Response dari server:', data);
 
-      const botMessage = {
-        id: userMessage.id + 1,
-        sender: 'bot',
-        text: data.response || 'Maaf, terjadi kesalahan.',
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      };
-
-      setMessages((prev) => [...prev, botMessage]);
+      // Ambil ulang semua pesan dari backend
+      await fetchMessages();
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage = {
-        id: userMessage.id + 1,
+        id: messages.length + 2,
         sender: 'bot',
-        text: 'Maaf, tidak bisa terhubung ke server.',
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        text: 'Maaf, terjadi kesalahan.',
       };
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
@@ -92,7 +91,7 @@ const ChatbotPuskesmas = () => {
         </div>
       </header>
 
-      {/* Chat Messages */}
+      {/* Chat Messages Area */}
       <div className="flex-1 p-4 overflow-y-auto scrollbar-hide space-y-4">
         {messages.map((msg) => (
           <div
@@ -106,16 +105,19 @@ const ChatbotPuskesmas = () => {
             )}
             <div
               className={`max-w-xs ${
-                msg.sender === 'user' ? 'bg-purple-600' : 'bg-gray-700'
+                msg.sender === 'user'
+                  ? 'bg-purple-600'
+                  : 'bg-gray-700'
               } rounded-lg p-3 text-white`}
             >
-              <p className="text-sm">{msg.text}</p>
+              <div className="markdown-body">
+                <ReactMarkdown>{msg.text}</ReactMarkdown>
+             </div>
               <span
                 className={`text-xs ${
-                  msg.sender === 'user' ? 'text-purple-300' : 'text-gray-400'
-                } mt-1 block text-right`}
+                  msg.sender === 'user' ? 'text-purple-300 text-right' : 'text-gray-400'
+                } mt-1 block ${msg.sender === 'user' ? 'text-right' : ''}`}
               >
-                {msg.time}
               </span>
             </div>
           </div>
@@ -136,13 +138,13 @@ const ChatbotPuskesmas = () => {
         )}
       </div>
 
-      {/* Chat Input */}
+      {/* Chat Input Area */}
       <div className="bg-gray-800 border-t border-gray-700 p-3">
         <form onSubmit={handleSendMessage} className="flex items-center space-x-2">
           <div className="flex-1 bg-gray-700 rounded-full px-4 py-2 flex items-center">
             <input
               type="text"
-              placeholder="Ketik pesan..."
+              placeholder="Type a message"
               className="bg-transparent text-white w-full focus:outline-none placeholder-gray-400"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
@@ -159,7 +161,12 @@ const ChatbotPuskesmas = () => {
               viewBox="0 0 24 24"
               stroke="currentColor"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+              />
             </svg>
           </button>
         </form>
