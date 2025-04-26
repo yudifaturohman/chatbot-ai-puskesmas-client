@@ -6,12 +6,12 @@ This project is a React-based interactive chatbot connected to the FastAPI backe
 
 ## Feature
 
-- 💬 React-based chat user interface
-- 🧠 AI answering using LLM (Groq + LLaMA 3.1)
-- 🔁 Chat is saved and can be retrieved based on `session_id`
-- 𯪄 Supports Markdown format in answers
-- ⏳ Bot typing indicator
-- 🧵 Conversation history storage
+- React-based chat user interface
+- AI answering using LLM (Groq + LLaMA 3.1)
+- Chat is saved and can be retrieved based on `session_id`
+- Supports Markdown format in answers
+- Bot typing indicator
+- Conversation history storage
 
 ---
 
