@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+// import logo from '../public/logo-ai.webp';
 
 const ChatbotPuskesmas = () => {
   const [message, setMessage] = useState('');
@@ -101,7 +102,13 @@ const ChatbotPuskesmas = () => {
             }`}
           >
             {msg.sender === 'bot' && (
-              <div className="w-8 h-8 rounded-full bg-gray-700 flex-shrink-0"></div>
+              <div className="w-8 h-8 rounded-full bg-gray-700 flex-shrink-0">
+                <img
+                    src={process.env.PUBLIC_URL + '/logo-ai.webp'}
+                    alt="AI Logo"
+                    className="w-full h-full object-cover rounded-full"
+                />
+              </div>
             )}
             <div
               className={`max-w-xs ${
