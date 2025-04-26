@@ -3,6 +3,9 @@
 This project is a React-based interactive chatbot connected to the FastAPI backend using the **Retrieval-Augmented Generation (RAG) approach**. This chatbot is designed to answer questions related to health center services based on an internal knowledge base.
 
 ---
+![image](https://github.com/user-attachments/assets/c00388f2-174e-430c-b90a-8e7d3f8f9164) ![image](https://github.com/user-attachments/assets/75ae2f7e-8425-4542-9feb-af472fa48f21)
+
+
 
 ## Feature
 
